@@ -64,55 +64,10 @@ df2.dx_desc_and_code <-
               collect())
 
 
-# try keywords: 
-df3.denodo_femoral_dx_desc <- 
-  vw_surgery_completed_cases %>% 
-  filter(surg_dx_desc %like% "%femoral%") %>% 
-  select(surg_dx_desc) %>%  # show_query()
-  collect() %>% 
-  distinct()
 
 
-# are these actually procedure codes? NO. 
-vw_surgery_completed_cases %>% 
-  filter(surg_px_1_desc %like% "%femoral neck%") %>% 
-  select(surg_px_1_desc) %>%  # show_query()
-  collect() %>% 
-  distinct() %>% View("px femoral")
 
 
-# or maybe they're `admit_dx_icd_1_desc`? 
-vw_adtc %>% 
-  filter(admit_dx_icd_1_desc %like% "%femoral%neck%") %>% 
-  select(admit_dx_icd_1_desc) %>% 
-  collect() %>% 
-  distinct() %>% View("adtc_dx")
-
-
-#***********************************************
-# SQL Serv surgery view: --------
-cnx2 <- dbConnect(odbc::odbc(),
-                  dsn = "cnx_SPDBSCSTA001")
-vw_or_mart <- dplyr::tbl(cnx2, 
-                         dbplyr::in_schema("ORMart.dbo", 
-                                           "vwRegionalORCompletedCase"))
-
-
-df1.hip_fracture_dx %>% 
-  left_join(vw_or_mart %>% 
-              select(DiagnosisDescription, 
-                     DxTargetInWeeks) %>% 
-              collect, 
-            by = c("surg_dx_desc" = "DiagnosisDescription"))
-
-
-# try keywords: 
-df4.sqlserv_femoral_dx_desc <- 
-  vw_or_mart %>% 
-  filter(DiagnosisDescription %like% "%femoral%") %>% 
-  select(DiagnosisDescription) %>%  # show_query()
-  collect() %>% 
-  distinct()
 
 
 
